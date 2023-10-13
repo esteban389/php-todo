@@ -94,7 +94,7 @@
             }
         } else {
             // Return type error
-            return $errorMessages[QUERY_ERROR_ARGUMENT_TYPE];
+            return QUERY_ERROR_ARGUMENT_TYPE;
         }
     }
 ?>
