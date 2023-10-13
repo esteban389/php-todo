@@ -8,6 +8,7 @@ The project is organized into two main folders, along with an index.html file in
 
 ### Index
 It's the only view in the project, on the first load it makes a fetch request to get all the todo tasks once it is fetched it also makes a request with each task to get an html to be displayed
+
 It contains updateStatus and deleteTask javascript functions which make API requests with the appropiate http methods and if the result is succesful there is a response in the interface
 
 ### Frontend
