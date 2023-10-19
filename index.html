@@ -8,6 +8,7 @@
             text-decoration: line-through;
         }
     </style>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">    <title>To do list</title>
 </head>
 <body>
@@ -16,9 +17,9 @@
         <div class="row">
             <div class="col-md-6 offset-md-3">
                 <!-- To-Do List Form -->
-                <form method="POST" action="./backend/formHandler.php">
+                <form id="taskForm">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="task" placeholder="Add a new task" required>
+                        <input type="text" class="form-control" id ="task" name="task" placeholder="Add a new task" required>
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="submit">Add</button>
                         </div>
@@ -36,86 +37,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script>
-
-
-        fetch("./backend/tasks.php")
-            .then(response =>{
-                if(!response.ok){
-                    throw new Error('Página no encontrada');
-                }
-                return response.json();
-            })
-            .then(json =>{
-                let listContainer =document.getElementById("todo-list");
-                listContainer.innerHTML = "";
-                json.map(task =>{
-                    let url = new URL(window.location.origin+"/todo"+"/frontend/todo_item.php");
-                    url.searchParams.append('status',task.status);
-                    url.searchParams.append('id',task.id);
-                    url.searchParams.append('taskText',task.text);
-                    fetch(url.toString())
-                        .then(response=>{
-                            if(!response.ok){
-                                throw new Error('Página no encontrada');
-                            }
-                            return response.text();
-                        })
-                        .then(html=>{
-                            listContainer.innerHTML += html;  
-
-                        });
-                })
-
-            });
-        
-        function updateStatus(button){
-            let liElement = button.closest('li');
-            let id = liElement.getAttribute('id');
-            let status = liElement.getAttribute('data-status');
-            let dataObject = {"id":id,"status":status};
-            let dataJson = JSON.stringify(dataObject);
-            fetch(`./backend/tasks.php?taskId=${id}`,{
-                    method: "PUT",
-                    headers: {'Content-Type':"application/json"},
-                    body:dataJson
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Página no encontrada');
-                    }else{
-                        return response.json()
-                    }
-                })
-                .then(json=>{
-                    liElement.setAttribute("data-status",json.updatedStatus );
-                })
-                .catch(error => {
-                    console.error(error.message);
-                });
-        }
-
-        function deleteTask(button){
-            let liElement = button.closest('li');
-            let id = liElement.getAttribute('id');
-            let dataObject = {"id":id};
-            let dataJson = JSON.stringify(dataObject);
-            fetch(`./backend/tasks.php?taskId=${id}`,{
-                    method: "DELETE",
-                    headers: {'Content-Type':"application/json"},
-                    body:dataJson
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Página no encontrada');
-                    }else{
-                        liElement.remove();
-                    }
-                })
-                .catch(error => {
-                    console.error(error.message);
-                });
-        }
-    </script>
+        <script src="frontend/javascript.js"/>
+</script>
 </body>
 </html>

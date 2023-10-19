@@ -69,6 +69,41 @@ function handlePutRequest($taskId)
     }
 }
 
+function handlePostRequest() {
+    // Get the JSON data from the request body
+    $putData = file_get_contents("php://input");
+    $requestData = json_decode($putData, true);
+
+    // Check if the JSON data is valid and contains the required fields
+    if ($requestData === null || !isset($requestData['task'])) {
+        httpResponse(400, ['error' => 'Invalid data format or missing data']);
+        return;
+    }
+
+
+    // Get the task text from the JSON data
+    $taskText = $requestData['task'];
+
+    // Insert or update the task in your database (you may need to adapt this part to your database structure)
+    $result = insertItem($taskText);
+    global $errorMessages;
+    if(in_array($result,$errorMessages,true)){
+        switch ($result){
+            case QUERY_ERROR_ARGUMENT_TYPE:
+                httpResponse(400, ['error' => $errorMessages[QUERY_ERROR_ARGUMENT_TYPE]]);
+                break;
+            case QUERY_ERROR_QUERY_PREPARATION:
+                httpResponse(400, ['error' => $errorMessages[QUERY_ERROR_QUERY_PREPARATION]]);
+        }
+    }
+    if ($result) {
+        httpResponse(200,$result);
+    } else {
+        httpResponse(500, ['error' => 'Failed to update task']);
+    }
+}
+
+
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 $taskId = null;
 
@@ -85,6 +120,7 @@ switch ($requestMethod) {
         }
         break;
     case "POST":
+        handlePostRequest();
         break;
     case "DELETE":
         if ($taskId === null) {
